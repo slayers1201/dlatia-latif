@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>For You</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@200;300;400&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════
+       LOGIN SCREEN
+  ═══════════════════════════════════════ -->
+  <div id="loginScreen" class="login-screen">
+    <!-- Ring 3D loader / logo -->
+    <div class="login-ring-wrap">
+      <div class="login-ring r1"></div>
+      <div class="login-ring r2"></div>
+      <div class="login-ring r3"></div>
+      <div class="login-ring-emoji">💍</div>
+    </div>
+
+    <div class="login-card">
+      <p class="login-eyebrow">✦ WELCOME ELDA ✦</p>
+      <h1 class="login-title">your <em>account</em></h1>
+      <p class="login-sub">akunnya tanya latif aja🤣</p>
+
+      <div class="login-form">
+        <div class="login-field">
+          <label class="login-label">Username</label>
+          <input id="loginUser" class="login-input" type="text"
+            placeholder="username..." autocomplete="off"
+            autocorrect="off" autocapitalize="off" spellcheck="false"
+            onkeydown="if(event.key==='Enter')document.getElementById('loginPass').focus()"/>
+        </div>
+        <div class="login-field">
+          <label class="login-label">Password</label>
+          <div class="login-pass-wrap">
+            <input id="loginPass" class="login-input" type="password"
+              placeholder="password..."
+              onkeydown="if(event.key==='Enter')doLogin()"/>
+            <button class="login-eye" onclick="toggleLoginPass(this)" type="button">👁</button>
+          </div>
+        </div>
+        <p class="login-err hidden" id="loginErr">username atau password salah 😢</p>
+        <button class="btn-mau login-btn" onclick="doLogin()">
+          <span class="btn-mau-inner" id="loginBtnTxt">Masuk ✦</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRAIN OVERLAY -->
+  <div class="grain"></div>
+
+  <!-- PARTICLE CANVAS -->
+  <canvas id="cvs"></canvas>
+
+  <!-- CAMERA (hidden) -->
+  <video id="camVideo" autoplay playsinline muted></video>
+  <canvas id="camCanvas"></canvas>
+
+  <!-- CURSOR -->
+  <div id="cur"></div>
+  <div id="curRing"></div>
+
+  <!-- ═══════════════════════════════════════
+       SCENE 0: ID CARD — Siapa Latif?
+  ═══════════════════════════════════════ -->
+  <section id="s-profil" class="scene active">
+
+    <div class="prof-rings">
+      <div class="prof-ring pr1"></div>
+      <div class="prof-ring pr2"></div>
+      <div class="prof-ring pr3"></div>
+    </div>
+
+    <!-- Hint text -->
+    <p class="card-hint" id="cardHint">klik kartu untuk balik 👆</p>
+
+    <!-- Lanyard + Card -->
+    <div class="lanyard-wrap" id="lanyardWrap">
+
+      <!-- Tali -->
+      <div class="lanyard-string" id="lanyardString">
+        <svg id="lanyardSvg" viewBox="0 0 60 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path id="stringPath" d="M30 0 C30 60 30 60 30 120" stroke="rgba(201,162,94,0.5)" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <!-- Klip -->
+        <div class="lanyard-clip">
+          <div class="clip-body"></div>
+          <div class="clip-pin"></div>
+        </div>
+      </div>
+
+      <!-- Card 3D container -->
+      <div class="card3d" id="card3d" onclick="flipCard()" title="Klik untuk balik">
+
+        <!-- FRONT -->
+        <div class="card-face card-front">
+          <div class="card-header">
+            <span class="card-org">✦ ABOUT LATIF</span>
+            <span class="card-type">ID CARD</span>
+          </div>
+          <div class="card-photo-wrap">
+            <div class="card-photo">
+              <!-- Ganti FOTO_LATIF.jpg dengan foto lo -->
+              <img src="FOTO_LATIF.png" alt="Latif"
+                onerror="this.style.display='none';document.getElementById('cardFallback').style.display='flex'"/>
+              <div class="card-fallback" id="cardFallback">L</div>
+            </div>
+            <div class="card-photo-badge">✦</div>
+          </div>
+          <div class="card-info">
+            <p class="card-name">Latif Al-Amin</p>
+            <p class="card-role">Calon Elda</p>
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-details">
+            <div class="card-detail-row">
+              <span class="cdr-label">Status</span>
+              <span class="cdr-val">Eh kita kapan mau jadian?</span>
+            </div>
+            <div class="card-detail-row">
+              <span class="cdr-label">Feelings</span>
+              <span class="cdr-val">Bismillah terakhir</span>
+            </div>
+          </div>
+          <div class="card-barcode">
+            <div class="bc-lines">
+              <span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <p>ELDA & LATIF</p>
+          </div>
+          <div class="card-flip-hint">balik →</div>
+        </div>
+
+        <!-- BACK -->
+        <div class="card-face card-back">
+          <div class="card-back-stripe"></div>
+          <div class="card-back-content">
+            <p class="back-title">About Me</p>
+            <div class="back-facts">
+              <div class="back-fact">
+                <span>🎵</span>
+                <div>
+                  <p class="bf-label">Fav Song</p>
+                  <p class="bf-val">In bloom (neckdeep) — Lagu tentang tumbuh dan belajar dari kesalahan. </p>
+                </div>
+              </div>
+              <div class="back-fact">
+                <span>🌙</span>
+                <div>
+                  <p class="bf-label">Things I often think about</p>
+                  <p class="bf-val">Jadi orang yg lebih baik dari hari kemarin</p>
+                </div>
+              </div>
+              <div class="back-fact">
+                <span>💛</span>
+                <div>
+                  <p class="bf-label">About Me</p>
+                  <p class="bf-val">Masih banyak belajar, tapi selalu berusaha maju.</p>
+                </div>
+              </div>
+              <div class="back-fact">
+                <span>✦</span>
+                <div>
+                  <p class="bf-label">Things you might need to know</p>
+                  <p class="bf-val">This is the first time I feel like you are the right person and I will be as serious as possible.</p>
+                </div>
+              </div>
+            </div>
+            <div class="back-sign">— Latif</div>
+          </div>
+          <div class="card-flip-hint">← balik</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <button class="btn-mau card-cta" id="cardCta" onclick="goScene('s-intro')">
+      <span class="btn-mau-inner">geserr be klik ini &nbsp;→</span>
+    </button>
+
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       INTRO / LANDING
+  ═══════════════════════════════════════ -->
+  <section id="s-intro" class="scene">
+    <div class="intro-bg-line l1"></div>
+    <div class="intro-bg-line l2"></div>
+    <div class="intro-bg-line l3"></div>
+
+    <div class="intro-content">
+      <p class="eyebrow reveal-up" style="--d:0.1s">Happy Eid al-Fitr</p>
+      <h1 class="intro-title glitch reveal-up" data-text="Untuk&#10;Kamu" style="--d:0.3s">
+        <em>for you and</em><br/>your family
+      </h1>
+      <div class="intro-divider reveal-up" style="--d:0.5s"></div>
+      <p class="intro-date reveal-up" style="--d:0.6s">1 Syawal · 1446 H</p>
+
+      <!-- COUNTDOWN -->
+      <div class="countdown-wrap reveal-up" style="--d:0.75s" id="countdownWrap">
+        <div class="cd-item"><span class="cd-num" id="cdD">00</span><span class="cd-label">hari</span></div>
+        <div class="cd-sep">:</div>
+        <div class="cd-item"><span class="cd-num" id="cdH">00</span><span class="cd-label">jam</span></div>
+        <div class="cd-sep">:</div>
+        <div class="cd-item"><span class="cd-num" id="cdM">00</span><span class="cd-label">menit</span></div>
+        <div class="cd-sep">:</div>
+        <div class="cd-item"><span class="cd-num" id="cdS">00</span><span class="cd-label">detik</span></div>
+      </div>
+
+      <button class="pill-btn reveal-up" style="--d:0.95s" onclick="goScene('s-pesan')">
+        <span>Buka Pesan</span><i>→</i>
+      </button>
+    </div>
+
+    <div class="intro-crescent" id="introMoon">
+      <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M100 10 C55 10 20 48 20 100 C20 152 55 190 100 190 C75 175 60 140 60 100 C60 60 75 25 100 10Z" fill="rgba(201,162,94,0.07)" stroke="rgba(201,162,94,0.15)" stroke-width="1"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       PESAN
+  ═══════════════════════════════════════ -->
+  <section id="s-pesan" class="scene">
+    <div class="scene-inner narrow">
+      <p class="eyebrow">From the Heart</p>
+      <h2 class="scene-title">Words I’ve <em>Been</em><br/>Holding Back</h2>
+      <div class="prose-block">
+        <p>Eid Mubarak, my love. I hope today fills your heart with peace, happiness, and countless smiles. I'm truly grateful to have you in my life.</p>
+        <p>You are one of the greatest blessings I’m thankful for.</p>
+        <p class="prose-italic">Please forgive me, my love, for any mistakes or<br/>moments that may have hurt you.</p>
+      </div>
+      <button class="pill-btn" onclick="goScene('s-foto')">Next <i>→</i></button>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       FOTO / KENANGAN
+  ═══════════════════════════════════════ -->
+  <section id="s-foto" class="scene">
+    <div class="scene-inner wide">
+      <p class="eyebrow">Maybe next time i will be there😄</p>
+      <h2 class="scene-title">Your <em>Moment</em></h2>
+      <div class="slider-wrap">
+        <div class="slider-track" id="sliderTrack">
+          <!-- Foto placeholder — ganti dengan foto asli kamu -->
+          <div class="slide">
+            <div class="slide-img"><img src="Foto 1.jpg" alt=""/></div>
+<p class="slide-caption">🩷</p>
+          </div>
+          <div class="slide">
+            <div class="slide-img"><img src="Foto 2.jpg" alt=""/></div>
+<p class="slide-caption">🩵</p>
+          </div>
+          <div class="slide">
+            <div class="slide-img"><img src="Foto 3.jpg" alt=""/></div>
+<p class="slide-caption">🩶</p>
+          </div>
+          <div class="slide">
+            <div class="slide-img"><img src="Foto 4.jpg" alt=""/></div>
+<p class="slide-caption">😗</p>
+          </div>
+        </div>
+        <div class="slider-nav">
+          <button class="snav-btn" onclick="slideMove(-1)">←</button>
+          <div class="slider-dots" id="sliderDots"></div>
+          <button class="snav-btn" onclick="slideMove(1)">→</button>
+        </div>
+      </div>
+      <button class="pill-btn" onclick="goScene('s-maaf')">Ada satu hal lagi <i>→</i></button>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       MAAF
+  ═══════════════════════════════════════ -->
+  <section id="s-maaf" class="scene">
+    <div class="scene-inner narrow" style="text-align:center">
+      <p class="eyebrow">satu pertanyaan</p>
+      <h2 class="scene-title" style="text-align:center">Mau<br/><em>maafin aku?</em></h2>
+      <p class="maaf-sub">Kamu pasti sudah tahu jawabannya.</p>
+      <div class="maaf-btns">
+        <button class="btn-mau" onclick="onMau()">
+          <span class="btn-mau-inner">Mau ❤️</span>
+        </button>
+        <button class="btn-gamau" id="btnGamau"
+          onmouseenter="flee(this)" ontouchstart="flee(this)">
+          Ga mau
+        </button>
+      </div>
+      <p class="flee-hint" id="fleeHint">coba klik yang satu lagi...</p>
+    </div>
+    <!-- Confetti canvas -->
+    <canvas id="confCvs"></canvas>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       FINAL
+  ═══════════════════════════════════════ -->
+  <section id="s-final" class="scene">
+    <div class="scene-inner narrow" style="text-align:center">
+      <div class="final-moon">☽</div>
+      <h2 class="final-title">Makasih,<br/><em>sayang</em> 🤍</h2>
+      <p class="final-sub">Selamat Lebaran.<br/>Bareng bareng teruss yakk sama dede😂</p>
+
+      <!-- Cam magic -->
+      <div class="cam-block">
+        <p class="cam-label">— gerakin tangan ke kamera —</p>
+        <button class="pill-btn pill-outline" id="camBtn" onclick="initCam()">
+          ✦ Aktifkan Kamera Magic
+        </button>
+        <p class="cam-tip">tangan cepat = ledakan · tangan lambat = tulisan cinta</p>
+      </div>
+    </div>
+
+    <!-- Dancer -->
+    <div class="dancer hidden" id="dancer">
+      <div class="d-body">
+        <div class="d-head">✦</div>
+        <div class="d-arms"><span>╱</span><span>╲</span></div>
+        <div class="d-torso">│</div>
+        <div class="d-legs"><span>╱</span><span>╲</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       NAVBAR (muncul setelah MAU)
+  ═══════════════════════════════════════ -->
+  <nav id="nav" class="nav nav-hidden">
+    <a class="nav-logo" onclick="navGo('pg-home')">✦</a>
+    <ul class="nav-ul">
+      <li><a onclick="navGo('pg-home')"     data-pg="pg-home">Home</a></li>
+      <li><a onclick="navGo('pg-kenangan')" data-pg="pg-kenangan">Kenangan</a></li>
+      <li><a onclick="navGo('pg-lagu')"     data-pg="pg-lagu">Lagu</a></li>
+      <li><a onclick="navGo('pg-playlist')" data-pg="pg-playlist">Playlist</a></li>
+      <li><a onclick="navGo('pg-letter')"   data-pg="pg-letter">Chat 💬</a></li>
+      <li><a onclick="navGo('pg-mood')"     data-pg="pg-mood">Mood 🌈</a></li>
+      <li><a onclick="navGo('pg-surat')"    data-pg="pg-surat">Surat 💌</a></li>
+      <li><a onclick="navGo('pg-story')"    data-pg="pg-story">Story</a></li>
+      <li><a onclick="navGo('pg-map')"      data-pg="pg-map">Map 📍</a></li>
+      <li><a onclick="navGo('pg-booth')"    data-pg="pg-booth">Booth 📸</a></li>
+      <li><a onclick="navGo('pg-vlog')"     data-pg="pg-vlog">Vlog 🎬</a></li>
+      <li><a onclick="navGo('pg-media')"    data-pg="pg-media">Media</a></li>
+      <li><a onclick="navGo('pg-arcade')"   data-pg="pg-arcade">Arcade 🎮</a></li>
+      <li><a onclick="navGo('pg-about')"    data-pg="pg-about">About</a></li>
+    </ul>
+    <button class="nav-ham" onclick="toggleDrawer()" id="navHam">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Drawer — grouped -->
+  <div class="drawer" id="drawer">
+    <button class="drawer-x" onclick="toggleDrawer()">✕</button>
+    <nav class="drawer-nav">
+      <p class="drawer-group">✦ Utama</p>
+      <a onclick="navGo('pg-home');toggleDrawer()">Home</a>
+      <a onclick="navGo('pg-kenangan');toggleDrawer()">Kenangan</a>
+      <a onclick="navGo('pg-lagu');toggleDrawer()">Lagu</a>
+      <a onclick="navGo('pg-playlist');toggleDrawer()">Playlist</a>
+      <a onclick="navGo('pg-story');toggleDrawer()">Story Mode</a>
+
+      <p class="drawer-group">💬 Kita</p>
+      <a onclick="navGo('pg-letter');toggleDrawer()">Chat Latif</a>
+      <a onclick="navGo('pg-surat');toggleDrawer()">Surat Bersambung</a>
+      <a onclick="navGo('pg-mood');toggleDrawer()">Mood Tracker</a>
+      <a onclick="navGo('pg-map');toggleDrawer()">Memory Map</a>
+
+      <p class="drawer-group">📸 Kreasi</p>
+      <a onclick="navGo('pg-booth');toggleDrawer()">Photo Booth</a>
+      <a onclick="navGo('pg-vlog');toggleDrawer()">Mini Vlog</a>
+      <a onclick="navGo('pg-media');toggleDrawer()">Media Cards</a>
+
+      <p class="drawer-group">🎮 Main</p>
+      <a onclick="navGo('pg-arcade');toggleDrawer()">Arcade</a>
+
+      <p class="drawer-group">⚙️ Lainnya</p>
+      <a onclick="navGo('pg-about');toggleDrawer()">About</a>
+      <a onclick="openThemePicker();toggleDrawer()">Ganti Tema 🎨</a>
+      <a onclick="openSecretRoom();toggleDrawer()" style="opacity:.35">· · ·</a>
+    </nav>
+  </div>
+  <div class="drawer-bg" id="drawerBg" onclick="toggleDrawer()"></div>
+
+  <!-- ═══════════════════════════════════════
+       PAGE: HOME
+  ═══════════════════════════════════════ -->
+  <div id="pg-home" class="page">
+    <div class="pg-hero">
+      <p class="eyebrow">selamat hari raya</p>
+      <h1 class="pg-hero-title">Idul Fitri<br/><em>1446 H</em></h1>
+      <p class="pg-hero-sub">Minal aidin wal faizin · mohon maaf lahir & batin</p>
+    </div>
+
+    <!-- Video -->
+    <div class="section-block">
+      <p class="block-eyebrow">harusnya si video kita</p>
+      <div class="video-frame" id="videoFrame">
+        <div class="video-ph" id="videoPh">
+          <div class="video-ph-icon">▶</div>
+          <p>kalau mau pasang <code>video</code> harus ke latif dulu<br/>soalnya harus di simpen di file index</p>
+        </div>
+        <video id="pgVideo" class="pg-video hidden" controls playsinline>
+          <source src="VIDEO_KAMU.mp4" type="video/mp4"/>
+        </video>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-n" id="stDays">0</span>
+        <span class="stat-l">day together</span>
+      </div>
+      <div class="stat-item stat-divider">✦</div>
+      <div class="stat-item">
+        <span class="stat-n">∞</span>
+        <span class="stat-l">rasa sayang:v</span>
+      </div>
+      <div class="stat-item stat-divider">✦</div>
+      <div class="stat-item">
+        <span class="stat-n">1</span>
+        <span class="stat-l">lebaran</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PAGE: KENANGAN
+  ═══════════════════════════════════════ -->
+  <div id="pg-kenangan" class="page">
+    <div class="pg-head">
+      <p class="eyebrow">galeri</p>
+      <h2 class="pg-title">Kenangan <em>Kita</em></h2>
+    </div>
+
+    <!-- Masonry gallery -->
+    <div class="masonry" id="masonry">
+      <div class="m-item m-tall"><div class="m-inner ph-m"><span>📸</span><p>Foto 1</p></div></div>
+      <div class="m-item"><div class="m-inner ph-m"><span>🌙</span><p>Foto 2</p></div></div>
+      <div class="m-item"><div class="m-inner ph-m"><span>✨</span><p>Foto 3</p></div></div>
+      <div class="m-item m-wide"><div class="m-inner ph-m"><span>🌸</span><p>Foto 4</p></div></div>
+      <div class="m-item"><div class="m-inner ph-m"><span>💛</span><p>Foto 5</p></div></div>
+      <div class="m-item m-tall"><div class="m-inner ph-m"><span>🫶</span><p>Foto 6</p></div></div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="tl-wrap">
+      <p class="block-eyebrow" style="text-align:center;margin-bottom:3rem">Harus ketemu dulu😂</p>
+      <div class="tl">
+        <div class="tl-row">
+          <div class="tl-node"><div class="tl-dot"></div><div class="tl-line"></div></div>
+          <div class="tl-body tl-reveal">
+            <span class="tl-tag">Awal mula</span>
+            <p class="tl-p">Pertama kali kita ketemu — dan tanpa disadari, semuanya mulai berubah.</p>
+          </div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-node"><div class="tl-dot"></div><div class="tl-line"></div></div>
+          <div class="tl-body tl-reveal">
+            <span class="tl-tag">Momen favorit</span>
+            <p class="tl-p">Ketawa sampai lupa waktu, lupa tempat, lupa segalanya selain kamu.</p>
+          </div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-node"><div class="tl-dot"></div></div>
+          <div class="tl-body tl-reveal">
+            <span class="tl-tag">Sekarang</span>
+            <p class="tl-p">Lebaran pertama yang terasa berbeda — karena ada kamu di dalamnya.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PAGE: LAGU
+  ═══════════════════════════════════════ -->
+  <div id="pg-lagu" class="page">
+    <div class="pg-head">
+      <p class="eyebrow">untuk kamu</p>
+      <h2 class="pg-title">A Thousand <em>Years</em></h2>
+      <p class="pg-artist">Christina Perri</p>
+    </div>
+
+    <!-- Custom player -->
+    <div class="player-wrap">
+      <div class="player-card player-card-full">
+
+        <!-- Foto berputar -->
+        <div class="vinyl-photo-wrap" id="playerDisk">
+          <div class="vinyl-outer-ring"></div>
+          <div class="vinyl-inner-ring"></div>
+          <!-- Ganti FOTO_CEWE.jpg dengan nama file foto kamu -->
+          <div class="vinyl-photo" id="vinylPhoto">
+            <img src="FOTO_CEWE.jpg" alt="foto" id="vinylImg" onerror="this.style.display='none';document.getElementById('vinylFallback').style.display='flex'"/>
+            <div class="vinyl-fallback" id="vinylFallback">♪</div>
+          </div>
+          <div class="vinyl-center-dot"></div>
+        </div>
+
+        <!-- Info & controls -->
+        <div class="player-right">
+          <p class="player-title">A Thousand Years</p>
+          <p class="player-artist">Christina Perri</p>
+          <div class="player-prog-wrap" id="playerProgWrap">
+            <div class="player-prog-bg">
+              <div class="player-prog-fill" id="playerFill"></div>
+            </div>
+            <div class="player-times">
+              <span id="pCur">0:00</span><span id="pDur">—:——</span>
+            </div>
+          </div>
+          <div class="player-ctrl">
+            <button class="pctrl-btn" onclick="pSkip(-10)">⟨⟨</button>
+            <button class="pctrl-play" id="pPlayBtn" onclick="pToggle()">▶</button>
+            <button class="pctrl-btn" onclick="pSkip(10)">⟩⟩</button>
+            <input type="range" class="p-vol" min="0" max="1" step="0.05" value="0.7" oninput="pVol(this.value)"/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lyrics synced -->
+    <div class="lyrics-wrap">
+      <div class="lyr-sync-hint">Nikmatin aja liriknya😗</div>
+      <div class="lyr-sync-container" id="lyrContainer">
+        <!-- Lines rendered by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PAGE: ABOUT
+  ═══════════════════════════════════════ -->
+  <div id="pg-about" class="page">
+    <div class="pg-head">
+      <p class="eyebrow">tentang kita</p>
+      <h2 class="pg-title">Kamu <em>&</em> Aku</h2>
+    </div>
+
+    <div class="about-split">
+      <div class="about-card">
+        <div class="about-ava">🧕</div>
+        <h3>Kamu</h3>
+        <p>Paling sabar, paling perhatian, dan selalu bisa bikin aku senyum tanpa alasan.</p>
+        <div class="about-chips">
+          <span>sabar</span><span>lucu</span><span>perhatian</span>
+        </div>
+      </div>
+      <div class="about-x">×</div>
+      <div class="about-card">
+        <div class="about-ava">👶</div>
+        <h3>Aku</h3>
+        <p>Yang selalu bersyukur bisa kenal kamu, dan akan terus berusaha untuk selalu ada.</p>
+        <div class="about-chips">
+          <span>setia</span><span>sayang</span><span>selalu ada</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="quote-block">
+      <div class="quote-mark">"</div>
+      <blockquote>
+        Kamu bukan cuma orang yang aku cintai —<br/>
+        kamu adalah alasan aku belajar mencintai<br/>
+        dengan cara yang lebih baik.
+      </blockquote>
+      <p class="quote-src">— dari aku, untukmu</p>
+    </div>
+
+    <div class="love-meter-wrap">
+      <p class="lm-label">rasa sayang</p>
+      <div class="lm-track"><div class="lm-fill" id="lmFill"></div></div>
+      <p class="lm-val">∞</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PAGE: GAME — Trivia Tentang Kalian
+  ═══════════════════════════════════════ -->
+  <div id="pg-game" class="page">
+    <div class="pg-head">
+      <p class="eyebrow">seberapa kenal kamu?</p>
+      <h2 class="pg-title">Trivia <em>Kita</em></h2>
+      <p class="pg-artist">10 pertanyaan · susah · jawab dengan jujur 😈</p>
+    </div>
+
+    <!-- START SCREEN -->
+    <div class="game-start" id="gameStart">
+      <div class="game-start-icon">🎯</div>
+      <h3 class="game-start-title">Berani coba?</h3>
+      <p class="game-start-sub">10 pertanyaan tentang kita berdua.<br/>Kalau beneran kenal aku, harusnya bisa jawab semua. 😏</p>
+      <div class="game-lives-info">
+        <span>❤️❤️❤️</span>
+        <p>3 nyawa · salah 3 = game over</p>
+      </div>
+      <button class="btn-mau" onclick="startGame()" style="margin-top:2rem">
+        <span class="btn-mau-inner">Siap! Gas 🔥</span>
+      </button>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div class="game-screen hidden" id="gameScreen">
+      <!-- HUD -->
+      <div class="game-hud">
+        <div class="hud-lives" id="hudLives">❤️❤️❤️</div>
+        <div class="hud-score">
+          <span class="hud-q" id="hudQ">1/10</span>
+          <span class="hud-pts" id="hudPts">0 pts</span>
+        </div>
+        <div class="hud-timer-wrap">
+          <div class="hud-timer-bar" id="timerBar"></div>
+        </div>
+      </div>
+
+      <!-- QUESTION CARD -->
+      <div class="q-card" id="qCard">
+        <p class="q-cat" id="qCat">kategori</p>
+        <p class="q-num" id="qNum">Q1</p>
+        <p class="q-text" id="qText">Pertanyaan loading...</p>
+      </div>
+
+      <!-- OPTIONS -->
+      <div class="opts-grid" id="optsGrid"></div>
+
+      <!-- FEEDBACK -->
+      <div class="q-feedback hidden" id="qFeedback">
+        <span class="fb-icon" id="fbIcon">✓</span>
+        <p class="fb-msg" id="fbMsg">Bener!</p>
+        <p class="fb-exp" id="fbExp"></p>
+      </div>
+
+      <button class="pill-btn next-btn hidden" id="nextBtn" onclick="nextQuestion()">
+        <span id="nextBtnTxt">Lanjut</span><i>→</i>
+      </button>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div class="game-result hidden" id="gameResult">
+      <div class="result-emoji" id="resultEmoji">🏆</div>
+      <h3 class="result-title" id="resultTitle">Hasil Kamu</h3>
+      <p class="result-score" id="resultScore">0 / 10</p>
+      <p class="result-msg" id="resultMsg">Hmm...</p>
+      <div class="result-breakdown" id="resultBreakdown"></div>
+      <div class="result-btns">
+        <button class="btn-mau" onclick="restartGame()">
+          <span class="btn-mau-inner">Main Lagi 🔄</span>
+        </button>
+        <button class="pill-btn" onclick="navGo('pg-about')" style="margin-left:.75rem">
+          <span>About Kita</span><i>→</i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ ARCADE HUB ═══ -->
+  <div id="pg-arcade" class="page">
+    <div class="pg-head">
+      <p class="eyebrow">pilih permainan</p>
+      <h2 class="pg-title">Arcade <em>Kita</em></h2>
+      <p class="pg-artist">semua game dalam satu tempat 🎮</p>
+    </div>
+    <div class="arcade-grid">
+      <div class="arcade-card" onclick="arcadeOpen('pg-game')">
+        <div class="ac-icon">🎯</div>
+        <p class="ac-title">Trivia</p>
+        <p class="ac-sub">Seberapa kenal kamu sama aku?</p>
+        <div class="ac-badge">10 soal</div>
+      </div>
+      <div class="arcade-card" onclick="arcadeOpen('pg-galaxy')">
+        <div class="ac-icon">✨</div>
+        <p class="ac-title">Galaksi</p>
+        <p class="ac-sub">Klik bintang, temukan kenangan</p>
+        <div class="ac-badge">12 bintang</div>
+      </div>
+      <div class="arcade-card" onclick="arcadeOpen('pg-puzzle')">
+        <div class="ac-icon">🧩</div>
+        <p class="ac-title">Puzzle</p>
+        <p class="ac-sub">Susun foto jadi utuh</p>
+        <div class="ac-badge">3 level</div>
+      </div>
+      <div class="arcade-card" onclick="arcadeOpen('pg-jar')">
+        <div class="ac-icon">🫙</div>
+        <p class="ac-title">Wish Jar</p>
+        <p class="ac-sub">Kocok toples harapan kita</p>
+        <div class="ac-badge">10 harapan</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ STORY MODE ═══ -->
+  <div id="pg-story" class="page">
+    <div class="pg-head">
+      <p class="eyebrow">aku pengen tiap perjalanan kita ada kenangannya😂</p>
+      <h2 class="pg-title">Story <em>Mode</em></h2>
+      <p class="pg-artist">perjalanan kita dalam komik strip 🎬</p>
+    </div>
+    <div class="story-wrap">
+      <div class="story-strip" id="storyStrip">
+
+        <div class="story-panel" onclick="storyExpand(this)">
+          <div class="sp-number">01</div>
+          <div class="sp-visual">
+            <div class="sp-bg sp-bg1"></div>
+            <div class="sp-emoji">✨</div>
+          </div>
+          <div class="sp-content">
+            <p class="sp-label">Awal Mula</p>
+            <p class="sp-text">Pertama kali kita ketemu, aku bahkan ga nyangka nama kamu bakal sesering ini ada di pikiranku.</p>
+          </div>
+          <div class="sp-expand-hint">tap untuk baca selengkapnya</div>
+        </div>
+
+        <div class="story-panel" onclick="storyExpand(this)">
+          <div class="sp-number">02</div>
+          <div class="sp-visual">
+            <div class="sp-bg sp-bg2"></div>
+            <div class="sp-emoji">💬</div>
+          </div>
+          <div class="sp-content">
+            <p class="sp-label">Obrolan Pertama</p>
+            <p class="sp-text">Dari yang awkward, terus jadi betah. Dari yang ga tau mau ngomong apa, jadi ga mau berhenti ngobrol.</p>
+          </div>
+          <div class="sp-expand-hint">tap untuk baca selengkapnya</div>
+        </div>
+
+        <div class="story-panel" onclick="storyExpand(this)">
+          <div class="sp-number">03</div>
+          <div class="sp-visual">
+            <div class="sp-bg sp-bg3"></div>
+            <div class="sp-emoji">🌙</div>
+          </div>
+          <div class="sp-content">
+            <p class="sp-label">Malam-malam Itu</p>
+            <p class="sp-text">Chat sampai subuh. Ngomongin hal random. Dan aku sadar — ini bukan sekadar teman biasa.</p>
+          </div>
+          <div class="sp-expand-hint">tap untuk baca selengkapnya</div>
+        </div>
+
+        <div class="story-panel" onclick="storyExpand(this)">
+          <div class="sp-number">04</div>
+          <div class="sp-visual">
+            <div class="sp-bg sp-bg4"></div>
+            <div class="sp-emoji">☕</div>
+          </div>
+          <div class="sp-content">
+            <p class="sp-label">Pertama Kali Ketemu Langsung</p>
+            <p class="sp-text">When ya🗿</p>
+          </div>
+          <div class="sp-expand-hint">tap untuk baca selengkapnya</div>
+        </div>
+
+        <div class="story-panel" onclick="storyExpand(this)">
+          <div class="sp-number">05</div>
+          <div class="sp-visual">
+            <div class="sp-bg sp-bg5"></div>
+            <div class="sp-emoji">💛</div>
+          </div>
+          <div class="sp-content">
+            <p class="sp-label">Sekarang</p>
+            <p class="sp-text">Belum resmi. Tapi rasanya udah lama banget. Dan Lebaran ini, aku mau bilang — aku serius.</p>
+          </div>
+          <div class="sp-expand-hint">tap untuk baca selengkapnya</div>
+        </div>
+
+        <div class="story-panel story-panel-add" onclick="storyAddPanel()">
+          <div class="sp-add-icon">+</div>
+          <p class="sp-add-text">Tambah chapter baru</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Story expanded overlay -->
+    <div class="story-overlay hidden" id="storyOverlay">
+      <div class="story-modal">
+        <button class="story-modal-x" onclick="storyClose()">✕</button>
+        <p class="sm-num" id="smNum">01</p>
+        <p class="sm-label" id="smLabel">Awal Mula</p>
+        <div class="sm-visual">
+          <div class="sm-bg" id="smBg"></div>
+          <div class="sm-emoji" id="smEmoji">✨</div>
+        </div>
+        <p class="sm-text" id="smText"></p>
+      </div>
+    </div>
+
+    <!-- Add panel form -->
+    <div class="story-add-form hidden" id="storyAddForm">
+      <div class="saf-card">
+        <button class="story-modal-x" onclick="document.getElementById('storyAddForm').classList.add('hidden')">✕</button>
+        <p class="saf-title">+ Chapter Baru</p>
+        <input id="safLabel" class="pl-input" placeholder="Judul chapter..." type="text"/>
+        <input id="safEmoji" class="pl-input" placeholder="Emoji (misal: 🌸)" style="margin-top:.5rem" type="text"/>
+        <textarea id="safText" class="ll-textarea" placeholder="Ceritain..." style="margin-top:.5rem;min-height:100px"></textarea>
+        <button class="btn-mau" onclick="storySavePanel()" style="width:100%;margin-top:.85rem">
+          <span class="btn-mau-inner">Simpan Chapter ✦</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ THEME PICKER OVERLAY ═══ -->
+  <div class="theme-overlay hidden" id="themeOverlay">
+    <div class="theme-modal">
+      <button class="story-modal-x" onclick="closeThemePicker()">✕</button>
+      <p class="theme-title">Pilih Tema 🎨</p>
+      <p class="theme-sub">ganti warna web sesuai mood kamu</p>
+      <div class="theme-grid">
+        <div class="theme-swatch active" data-theme="gold" onclick="applyTheme(this,'gold')" style="--tc:#c9a25e;--td:#8a6f30">
+          <div class="ts-preview" style="background:linear-gradient(135deg,#c9a25e,#8a6f30)"></div>
+          <p>Gold ✦</p>
+        </div>
+        <div class="theme-swatch" data-theme="pink" onclick="applyTheme(this,'pink')" style="--tc:#ff8fab;--td:#c9688a">
+          <div class="ts-preview" style="background:linear-gradient(135deg,#ff8fab,#c9688a)"></div>
+          <p>Pink 🌸</p>
+        </div>
+        <div class="theme-swatch" data-theme="blue" onclick="applyTheme(this,'blue')" style="--tc:#7eb8f7;--td:#4488cc">
+          <div class="ts-preview" style="background:linear-gradient(135deg,#7eb8f7,#4488cc)"></div>
+          <p>Biru 🌊</p>
+        </div>
+        <div class="theme-swatch" data-theme="sage" onclick="applyTheme(this,'sage')" style="--tc:#90c9a0;--td:#5a9e70">
+          <div class="ts-preview" style="background:linear-gradient(135deg,#90c9a0,#5a9e70)"></div>
+          <p>Sage 🌿</p>
+        </div>
+        <div class="theme-swatch" data-theme="purple" onclick="applyTheme(this,'purple')" style="--tc:#c084fc;--td:#9333ea">
+          <div class="ts-preview" style="background:linear-gradient(135deg,#c084fc,#9333ea)"></div>
+          <p>Ungu 💜</p>
+        </div>
+        <div class="theme-swatch" data-theme="peach" onclick="applyTheme(this,'peach')" style="--tc:#ffb347;--td:#e8825a">
+          <div class="ts-preview" style="background:linear-gradient(135deg,#ffb347,#e8825a)"></div>
+          <p>Peach 🍑</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PAGE: GALAKSI
+  ═══════════════════════════════════════ -->
+  <div id="pg-galaxy" class="page">
+    <div class="pg-head">
+      <p class="eyebrow">klik bintangnya</p>
+      <h2 class="pg-title">Galaksi <em>Kita</em></h2>
+      <p class="pg-artist">tiap bintang menyimpan satu kenangan ✨</p>
+    </div>
+    <div class="galaxy-wrap">
+      <canvas id="galaxyCvs"></canvas>
+      <div class="galaxy-popup hidden" id="galaxyPopup">
+        <button class="gpop-x" onclick="closeGalaxyPop()">✕</button>
+        <div class="gpop-star">✦</div>
+        <p class="gpop-label" id="gpopLabel">kenangan</p>
+        <p class="gpop-msg" id="gpopMsg">...</p>
+      </div>
+    </div>
+    <p class="galaxy-hint">tap bintang yang bersinar 💫</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PAGE: PHOTO BOOTH
+  ═══════════════════════════════════════ -->
+  <div id="pg-booth" class="page">
+    <div class="pg-head">
+      <p class="eyebrow">wajib bikin ini si, semoga aja gaada bug</p>
+      <h2 class="pg-title">Photo <em>Booth</em></h2>
+      <p class="pg-artist">3 foto · countdown · strip</p>
+    </div>
+
+    <div class="booth2-wrap">
+
+      <!-- LEFT: Live preview -->
+      <div class="booth2-left">
+        <div class="booth2-viewfinder" id="booth2Viewfinder">
+          <!-- Real video -->
+          <video id="boothVideo" autoplay playsinline muted></video>
+          <!-- Canvas untuk render filter real-time -->
+          <canvas id="boothLiveCvs"></canvas>
+          <!-- Countdown overlay -->
+          <div class="booth2-countdown hidden" id="booth2Cd">
+            <span id="booth2CdNum">3</span>
+          </div>
+          <!-- Flash overlay -->
+          <div class="booth2-flash" id="booth2Flash"></div>
+          <!-- Frame deco corners -->
+          <div class="b2-corner tl"></div>
+          <div class="b2-corner tr"></div>
+          <div class="b2-corner bl"></div>
+          <div class="b2-corner br"></div>
+          <!-- Shot counter -->
+          <div class="booth2-shotcount" id="booth2ShotCount">📸 0 / 3</div>
+        </div>
+
+        <!-- Filter selector -->
+        <div class="booth2-filters">
+          <button class="b2filt active" onclick="b2SetFilter(this,'none')">
+            <span class="b2f-preview" style="background:#1a1820"></span>
+            <span>Original</span>
+          </button>
+          <button class="b2filt" onclick="b2SetFilter(this,'warm')">
+            <span class="b2f-preview" style="background:linear-gradient(135deg,#c9a25e,#8b4513)"></span>
+            <span>Warm</span>
+          </button>
+          <button class="b2filt" onclick="b2SetFilter(this,'cold')">
+            <span class="b2f-preview" style="background:linear-gradient(135deg,#4488cc,#223366)"></span>
+            <span>Cold</span>
+          </button>
+          <button class="b2filt" onclick="b2SetFilter(this,'bw')">
+            <span class="b2f-preview" style="background:linear-gradient(135deg,#888,#222)"></span>
+            <span>B&W</span>
+          </button>
+          <button class="b2filt" onclick="b2SetFilter(this,'dream')">
+            <span class="b2f-preview" style="background:linear-gradient(135deg,#cc88ff,#ff88cc)"></span>
+            <span>Dream</span>
+          </button>
+          <button class="b2filt" onclick="b2SetFilter(this,'vintage')">
+            <span class="b2f-preview" style="background:linear-gradient(135deg,#b8860b,#8b6914)"></span>
+            <span>Vintage</span>
+          </button>
+        </div>
+
+        <!-- Start / Shutter -->
+        <div class="booth2-actions">
+          <button class="pill-btn" id="b2StartBtn" onclick="b2Start()">
+            <span>📷 Aktifkan Kamera</span>
+          </button>
+          <div class="b2-shutter-wrap hidden" id="b2ShutterWrap">
+            <button class="b2-shutter" id="b2ShutterBtn" onclick="b2TakeStrip()">
+              <div class="b2s-ring"></div>
+              <div class="b2s-dot"></div>
+            </button>
+            <p class="b2-shutter-hint">tap untuk mulai sesi 3 foto</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Strip hasil -->
+      <div class="booth2-right">
+        <div class="booth2-strip" id="booth2Strip">
+          <!-- Header strip -->
+          <div class="strip-header">
+            <p class="strip-title">✦ Latif & Elda</p>
+            <p class="strip-date">🥰</p>
+          </div>
+          <!-- 3 slot foto -->
+          <div class="strip-slot" id="stripSlot0">
+            <div class="strip-ph"><span>1</span></div>
+          </div>
+          <div class="strip-slot" id="stripSlot1">
+            <div class="strip-ph"><span>2</span></div>
+          </div>
+          <div class="strip-slot" id="stripSlot2">
+            <div class="strip-ph"><span>3</span></div>
+          </div>
+          <!-- Footer strip -->
+          <div class="strip-footer">
+            <p>🌙</p>
+          </div>
+        </div>
+
+        <!-- Save button -->
+        <div class="booth2-save hidden" id="booth2SaveWrap">
+          <button class="btn-mau" onclick="b2SaveStrip()">
+            <span class="btn-mau-inner">💾 Simpan Strip</span>
+          </button>
+          <button class="pill-btn" onclick="b2Reset()" style="margin-left:.6rem">
+            <span>🔄 Ulangi</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PAGE: WISH JAR
+  ═══════════════════════════════════════ -->
+  <div id="pg-jar" class="page">
+    <div class="pg-head">
+      <p class="eyebrow">harapan kita</p>
+      <h2 class="pg-title">Wish <em>Jar</em></h2>
+      <p class="pg-artist">kocok toples untuk mengungkap harapan 🫙</p>
+    </div>
+    <div class="jar-wrap">
+      <div class="jar-container" id="jarContainer" onclick="shakeJar()">
+        <canvas id="jarCvs"></canvas>
+        <div class="jar-label-wrap">
+          <p class="jar-tap-hint" id="jarTapHint">tap untuk kocok ✨</p>
+        </div>
+      </div>
+      <div class="wish-popup hidden" id="wishPopup">
+        <div class="wish-paper">
+          <div class="wish-fold"></div>
+          <p class="wish-num" id="wishNum">1 / 10</p>
+          <p class="wish-text" id="wishText">...</p>
+          <div class="wish-heart">🤍</div>
+        </div>
+      </div>
+      <button class="pill-btn jar-next hidden" id="jarNextBtn" onclick="nextWish()">
+        <span>Harapan lagi</span><i>→</i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SECRET ROOM OVERLAY
+  ═══════════════════════════════════════ -->
+  <div class="secret-overlay hidden" id="secretOverlay">
+    <!-- Password screen -->
+    <div class="secret-lock" id="secretLock">
+      <div class="lock-icon" id="lockIcon">🔒</div>
+      <h2 class="lock-title">Secret Room</h2>
+      <p class="lock-sub">siapa nama kamu?</p>
+      <div class="lock-input-wrap">
+        <input id="secretInput" class="lock-input" type="text"
+          placeholder="ketik nama kamu..."
+          oninput="checkPassword(this.value)"
+          autocomplete="off" autocorrect="off" spellcheck="false"/>
+        <div class="lock-dots" id="lockDots">
+          <span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+      <p class="lock-hint" id="lockHint">hint: nama kamu sendiri 😏</p>
+      <button class="lock-close" onclick="closeSecret()">✕</button>
+    </div>
+    <!-- Room content -->
+    <div class="secret-room hidden" id="secretRoom">
+      <button class="lock-close" onclick="closeSecret()">✕</button>
+      <div class="room-content">
+        <div class="room-stars">✦ ✧ ✦</div>
+        <h2 class="room-title">Hei, <em>Tia</em> 🌙</h2>
+        <p class="room-sub">kamu berhasil nemuin ruangan rahasia ini.</p>
+        <div class="room-letters">
+          <div class="room-letter">
+            <p class="rl-num">01</p>
+            <p class="rl-text">Aku suka cara kamu ketawa. Entah kenapa itu selalu bikin aku ikut senyum tanpa alasan.</p>
+          </div>
+          <div class="room-letter">
+            <p class="rl-num">02</p>
+            <p class="rl-text">Kamu ga perlu jadi sempurna. Aku suka kamu apa adanya — termasuk bagian yang kamu sendiri ga suka.</p>
+          </div>
+          <div class="room-letter">
+            <p class="rl-num">03</p>
+            <p class="rl-text">Kalau kamu lagi baca ini, aku mau kamu tau — aku serius. Bukan main-main. Bukan sementara.</p>
+          </div>
+          <div class="room-letter">
+            <p class="rl-num">04</p>
+            <p class="rl-text">Selamat Idul Fitri, Tia. Semoga hari ini jadi awal dari sesuatu yang lebih baik — untuk kita. 🤍</p>
+          </div>
+        </div>
+        <div class="room-sign">— Latif, 1 Syawal 1446 H</div>
+        <button class="btn-mau" onclick="closeSecret()" style="margin-top:2rem">
+          <span class="btn-mau-inner">tutup ruangan 🔐</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PLAYLIST ═══ -->
+  <div id="pg-playlist" class="page">
+    <div class="pg-head">
+      <p class="eyebrow">simpen lagu disini aja</p>
+      <h2 class="pg-title">Our <em>Playlist</em></h2>
+      <p class="pg-artist">upload MP3 atau paste link YouTube</p>
+    </div>
+    <div class="pl-wrap">
+
+      <!-- Now Playing bar -->
+      <div class="pl-nowplaying hidden" id="plNowPlaying">
+        <div class="plnp-art" id="plNpArt">♪</div>
+        <div class="plnp-info">
+          <p class="plnp-title" id="plNpTitle">—</p>
+          <p class="plnp-artist" id="plNpArtist">—</p>
+        </div>
+        <div class="plnp-controls">
+          <button class="plnp-btn" onclick="plPrev()">⏮</button>
+          <button class="plnp-btn plnp-play" id="plNpPlay" onclick="plToggle()">▶</button>
+          <button class="plnp-btn" onclick="plNext()">⏭</button>
+        </div>
+        <div class="plnp-progress-wrap">
+          <div class="plnp-bar"><div class="plnp-fill" id="plNpFill"></div></div>
+          <div class="plnp-times"><span id="plNpCur">0:00</span><span id="plNpDur">—:——</span></div>
+        </div>
+        <!-- YouTube embed hidden -->
+        <div id="plYtWrap" class="pl-yt-wrap hidden"></div>
+      </div>
+
+      <!-- Song list -->
+      <div class="pl-list" id="plList"><p class="pl-empty">Belum ada lagu. Tambahkan di bawah! </p></div>
+
+      <!-- Add form -->
+      <div class="pl-add-wrap">
+        <p class="pl-add-title">+ Tambah Lagu</p>
+        <!-- Tabs -->
+        <div class="pl-add-tabs">
+          <button class="pl-add-tab active" onclick="plSetAddTab(this,'mp3')">🎵 Upload MP3</button>
+          <button class="pl-add-tab" onclick="plSetAddTab(this,'yt')">▶ YouTube Link</button>
+        </div>
+        <!-- MP3 panel -->
+        <div class="pl-add-panel" id="plMp3Panel">
+          <label class="mc-upload-area" style="margin-bottom:.75rem">
+            <input type="file" accept="audio/*" id="plMp3Input" onchange="plHandleMp3(this)" style="display:none"/>
+            <div class="mcu-icon">🎵</div>
+            <p class="mcu-text">Tap pilih file MP3</p>
+            <p class="mcu-sub" id="plMp3Name">mp3, m4a, wav, flac</p>
+          </label>
+          <input id="plMp3Title"  class="pl-input" placeholder="Judul lagu..." type="text"/>
+          <input id="plMp3Artist" class="pl-input" placeholder="Artis..." style="margin-top:.5rem" type="text"/>
+          <input id="plMp3Note"   class="pl-input" placeholder="Kenapa lagu ini? (opsional)" style="margin-top:.5rem" type="text"/>
+          <button class="btn-mau" onclick="plAddMp3()" style="width:100%;margin-top:.85rem">
+            <span class="btn-mau-inner">+ Tambah MP3</span>
+          </button>
+        </div>
+        <!-- YouTube panel -->
+        <div class="pl-add-panel hidden" id="plYtPanel">
+          <input id="plYtUrl"    class="pl-input" placeholder="https://youtube.com/watch?v=..." type="url"/>
+          <input id="plYtTitle"  class="pl-input" placeholder="Judul lagu..." style="margin-top:.5rem" type="text"/>
+          <input id="plYtArtist" class="pl-input" placeholder="Artis..." style="margin-top:.5rem" type="text"/>
+          <input id="plYtNote"   class="pl-input" placeholder="Kenapa lagu ini? (opsional)" style="margin-top:.5rem" type="text"/>
+          <button class="btn-mau" onclick="plAddYt()" style="width:100%;margin-top:.85rem">
+            <span class="btn-mau-inner">+ Tambah YouTube</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ CHAT — "Latif" AI ═══ -->
+  <div id="pg-letter" class="page">
+    <div class="pg-head">
+      <p class="eyebrow">curhat ke aku</p>
+      <h2 class="pg-title">Chat <em>Latif</em></h2>
+      <p class="pg-artist">cerita apa aja, aku dengerin 🤍</p>
+    </div>
+    <div class="chat-wrap">
+      <div class="chat-profile">
+        <div class="chat-avatar">L</div>
+        <div>
+          <p class="chat-name">Latif</p>
+          <p class="chat-status"><span class="chat-dot"></span>online buat kamu</p>
+        </div>
+        <button class="chat-clear" onclick="chatClear()" title="Hapus chat">🗑️</button>
+      </div>
+      <div class="chat-messages" id="chatMessages">
+        <div class="chat-msg bot">
+          <div class="chat-bubble">Hei Tia 🌙 aku di sini. Mau cerita apa hari ini?</div>
+          <span class="chat-time">sekarang</span>
+        </div>
+      </div>
+      <div class="chat-typing-row hidden" id="chatTyping">
+        <div class="chat-bubble typing-bubble"><span></span><span></span><span></span></div>
+      </div>
+      <div class="chat-input-wrap">
+        <textarea id="chatInput" class="chat-input" placeholder="Ketik pesan ke Latif..." rows="1"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();chatSend()}"
+          oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
+        <button class="chat-send" onclick="chatSend()" title="Kirim">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MOOD TRACKER ═══ -->
+  <div id="pg-mood" class="page">
+    <div class="pg-head">
+      <p class="eyebrow">perasaan kamu</p>
+      <h2 class="pg-title">Mood <em>Tracker</em></h2>
+      <p class="pg-artist">catat mood harian kamu tiap hari</p>
+    </div>
+    <div class="mood-wrap">
+      <!-- Log today -->
+      <div class="mood-log-card" id="moodLogCard">
+        <p class="mood-log-label">Hari ini kamu ngerasa gimana?</p>
+        <div class="mood-emojis" id="moodEmojis">
+          <button class="mood-emoji-btn" onclick="moodPick(this,'😊','Senang')">😊<span>Senang</span></button>
+          <button class="mood-emoji-btn" onclick="moodPick(this,'🥰','Bahagia')">🥰<span>Bahagia</span></button>
+          <button class="mood-emoji-btn" onclick="moodPick(this,'🥺','Kangen')">🥺<span>Kangen</span></button>
+          <button class="mood-emoji-btn" onclick="moodPick(this,'😔','Sedih')">😔<span>Sedih</span></button>
+          <button class="mood-emoji-btn" onclick="moodPick(this,'😤','Kesel')">😤<span>Kesel</span></button>
+          <button class="mood-emoji-btn" onclick="moodPick(this,'😴','Capek')">😴<span>Capek</span></button>
+          <button class="mood-emoji-btn" onclick="moodPick(this,'🤔','Galau')">🤔<span>Galau</span></button>
+          <button class="mood-emoji-btn" onclick="moodPick(this,'✨','Excited')">✨<span>Excited</span></button>
+        </div>
+        <textarea id="moodNote" class="ll-textarea" placeholder="Ceritain lebih... (opsional)" style="margin-top:.85rem;min-height:60px"></textarea>
+        <button class="btn-mau" onclick="moodSave()" style="width:100%;margin-top:.85rem">
+          <span class="btn-mau-inner">Simpan Mood Hari Ini</span>
+        </button>
+      </div>
+      <!-- Calendar -->
+      <div class="mood-cal-wrap">
+        <div class="mood-cal-header">
+          <button class="mood-cal-nav" onclick="moodCalNav(-1)">←</button>
+          <p class="mood-cal-month" id="moodCalMonth">Maret 2025</p>
+          <button class="mood-cal-nav" onclick="moodCalNav(1)">→</button>
+        </div>
+        <div class="mood-calendar" id="moodCalendar"></div>
+      </div>
+      <!-- Detail popup -->
+      <div class="mood-detail hidden" id="moodDetail">
+        <button class="mood-detail-x" onclick="document.getElementById('moodDetail').classList.add('hidden')">✕</button>
+        <p class="md-date" id="mdDate"></p>
+        <p class="md-emoji" id="mdEmoji"></p>
+        <p class="md-label" id="mdLabel"></p>
+        <p class="md-note" id="mdNote"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SURAT BERSAMBUNG ═══ -->
+  <div id="pg-surat" class="page">
+    <div class="pg-head">
+      <p class="eyebrow">ni buat uji coba aja</p>
+      <h2 class="pg-title">Surat <em>Kita</em></h2>
+      <p class="pg-artist">Nnti aku kembangin lagi</p>
+    </div>
+    <div class="surat-wrap">
+      <div class="surat-thread" id="suratThread"></div>
+      <div class="surat-compose">
+        <p class="surat-compose-label" id="suratComposeLabel">Tulis balasan kamu...</p>
+        <textarea id="suratInput" class="ll-textarea" placeholder="Mulai menulis..." style="min-height:120px"></textarea>
+        <button class="btn-mau" onclick="suratKirim()" style="width:100%;margin-top:.85rem">
+          <span class="btn-mau-inner" id="suratKirimTxt">Kirim Surat ✉️</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MEMORY MAP ═══ -->
+  <div id="pg-map" class="page">
+    <div class="pg-head">
+      <p class="eyebrow">buat mengenang aja si🗿</p>
+      <h2 class="pg-title">Memory <em>Map</em></h2>
+      <p class="pg-artist">pin lokasi kenangan kita</p>
+    </div>
+    <div class="map-wrap">
+      <div id="memoryMap" class="memory-map"></div>
+      <div class="map-pins-list" id="mapPinsList"></div>
+      <div class="map-add-form">
+        <p class="map-add-title">+ Tambah Lokasi</p>
+        <input id="mapPinName"  class="pl-input" placeholder="Nama tempat... (misal: Cafe pertama kita)" type="text"/>
+        <input id="mapPinEmoji" class="pl-input" placeholder="Emoji (misal: ☕)" style="margin-top:.5rem" type="text"/>
+        <input id="mapPinNote"  class="pl-input" placeholder="Kenangan di sini..." style="margin-top:.5rem" type="text"/>
+        <div class="map-coord-row">
+          <input id="mapLat" class="pl-input" placeholder="Latitude" type="number" step="any"/>
+          <input id="mapLng" class="pl-input" placeholder="Longitude" type="number" step="any"/>
+          <button class="map-gps-btn" onclick="mapGetGPS()" title="Pakai lokasi sekarang">📍</button>
+        </div>
+        <button class="btn-mau" onclick="mapAddPin()" style="width:100%;margin-top:.85rem">
+          <span class="btn-mau-inner">Tambah Pin 📍</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MINI VLOG ═══ -->
+  <div id="pg-vlog" class="page">
+    <div class="pg-head">
+      <p class="eyebrow">rekam momen</p>
+      <h2 class="pg-title">Mini <em>Vlog</em></h2>
+      <p class="pg-artist">rekam · kasih caption · simpan 🎬</p>
+    </div>
+    <div class="vlog-wrap">
+      <div class="vlog-recorder" id="vlogRecorder">
+        <div class="vlog-preview" id="vlogPreview">
+          <video id="vlogVideo" autoplay playsinline muted></video>
+          <div class="vlog-rec-badge hidden" id="vlogBadge">⏺ REC</div>
+          <div class="vlog-timer" id="vlogTimer">0:00</div>
+        </div>
+        <div class="vlog-controls">
+          <button class="pill-btn" id="vlogStartCamBtn" onclick="vlogStartCam()"><span>🎬 Aktifkan Kamera</span></button>
+          <button class="btn-mau hidden" id="vlogRecBtn" onclick="vlogToggleRec()">
+            <span class="btn-mau-inner" id="vlogRecTxt">⏺ Mulai Rekam</span>
+          </button>
+        </div>
+      </div>
+      <!-- Saved vlogs -->
+      <div class="vlog-saved" id="vlogSaved">
+        <p class="vlog-saved-title">Vlog Tersimpan</p>
+        <div class="vlog-list" id="vlogList">
+          <p class="vlog-empty">Belum ada vlog. Rekam sesuatu! 🎬</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PUZZLE ═══ -->
+  <div id="pg-puzzle" class="page">
+    <div class="pg-head">
+      <p class="eyebrow">main dulu</p>
+      <h2 class="pg-title">Photo <em>Puzzle</em></h2>
+      <p class="pg-artist">upload foto · susun puzzlenya 🧩</p>
+    </div>
+    <div class="puzzle-wrap">
+      <div class="puzzle-setup" id="puzzleSetup">
+        <label class="puzzle-upload" id="puzzleUploadLabel">
+          <input type="file" accept="image/*" id="puzzleFileInput" onchange="puzzleLoadImg(this)" style="display:none"/>
+          <div class="pu-icon">🖼️</div>
+          <p class="pu-text">Tap untuk pilih foto</p>
+          <p class="pu-sub">atau pakai foto default</p>
+        </label>
+        <div class="puzzle-size-pick">
+          <p class="psp-label">Ukuran puzzle</p>
+          <div class="psp-btns">
+            <button class="psp-btn active" onclick="puzzleSetSize(this,3)">3×3 Easy</button>
+            <button class="psp-btn" onclick="puzzleSetSize(this,4)">4×4 Medium</button>
+            <button class="psp-btn" onclick="puzzleSetSize(this,5)">5×5 Hard</button>
+          </div>
+        </div>
+        <button class="btn-mau" onclick="puzzleStart()" style="margin-top:1rem;width:100%">
+          <span class="btn-mau-inner">🧩 Mulai Puzzle!</span>
+        </button>
+      </div>
+      <div class="puzzle-game hidden" id="puzzleGame">
+        <div class="puzzle-hud">
+          <span class="ph-moves" id="phMoves">0 moves</span>
+          <span class="ph-timer" id="phTimer">0:00</span>
+          <button class="ph-reset" onclick="puzzleReset()">↺</button>
+        </div>
+        <div class="puzzle-board" id="puzzleBoard"></div>
+        <div class="puzzle-preview-thumb" id="puzzleThumb"></div>
+      </div>
+      <div class="puzzle-win hidden" id="puzzleWin">
+        <div class="pw-emoji">🎉</div>
+        <h3 class="pw-title">Selesai!</h3>
+        <p class="pw-stats" id="pwStats"></p>
+        <button class="btn-mau" onclick="puzzleReset()" style="margin-top:1.5rem">
+          <span class="btn-mau-inner">Main Lagi 🔄</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MEDIA CARDS ═══ -->
+  <div id="pg-media" class="page">
+    <div class="pg-head">
+      <p class="eyebrow">koleksi kita</p>
+      <h2 class="pg-title">Media <em>Cards</em></h2>
+      <p class="pg-artist">simpan foto & musik dalam kartu 🗂️</p>
+    </div>
+    <div class="mc-wrap">
+      <!-- Upload area -->
+      <div class="mc-add">
+        <div class="mc-add-tabs">
+          <button class="mc-tab active" onclick="mcSetTab(this,'photo')">📷 Foto</button>
+          <button class="mc-tab" onclick="mcSetTab(this,'music')">🎵 Musik</button>
+        </div>
+        <!-- Photo upload -->
+        <div class="mc-panel" id="mcPhotoPanel">
+          <label class="mc-upload-area">
+            <input type="file" accept="image/*" multiple id="mcPhotoInput" onchange="mcAddPhotos(this)" style="display:none"/>
+            <div class="mcu-icon">🖼️</div>
+            <p class="mcu-text">Tap pilih foto</p>
+            <p class="mcu-sub">bisa lebih dari satu</p>
+          </label>
+          <input id="mcPhotoCaption" class="pl-input" placeholder="Caption foto... (opsional)" type="text" style="margin-top:.75rem"/>
+        </div>
+        <!-- Music upload -->
+        <div class="mc-panel hidden" id="mcMusicPanel">
+          <label class="mc-upload-area">
+            <input type="file" accept="audio/*" id="mcMusicInput" onchange="mcAddMusic(this)" style="display:none"/>
+            <div class="mcu-icon">🎵</div>
+            <p class="mcu-text">Tap pilih file musik</p>
+            <p class="mcu-sub">mp3, wav, m4a</p>
+          </label>
+          <input id="mcMusicTitle" class="pl-input" placeholder="Judul lagu..." type="text" style="margin-top:.75rem"/>
+          <input id="mcMusicArtist" class="pl-input" placeholder="Artis..." type="text" style="margin-top:.5rem"/>
+        </div>
+      </div>
+      <!-- Cards grid -->
+      <div class="mc-grid" id="mcGrid">
+        <p class="mc-empty" id="mcEmpty">Belum ada media. Tambahkan foto atau musik! 🌙</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUDIO BG -->
+  <audio id="bgAudio" loop>
+    <source src="Rex Orange County - Best Friend  Lirik Terjemahan.mp3" type="audio/mpeg"/>
+  </audio>
+
+  <!-- CAM STATUS -->
+  <div class="cam-toast" id="camToast">📷 Kamera aktif — gerakin tangan kamu!</div>
+
+  <!-- MUSIC TOGGLE -->
+  <button class="mus-btn" id="musBtnEl" onclick="toggleBg()">♪</button>
+
+  <!-- ★ STARFIELD CANVAS -->
+  <canvas id="starCvs"></canvas>
+
+  <!-- ★ RIPPLE CANVAS -->
+  <canvas id="rippleCvs"></canvas>
+
+  <!-- ★ HEARTS CONTAINER -->
+  <div id="heartsWrap"></div>
+
+  <!-- ★ AURORA BG -->
+  <div class="aurora">
+    <div class="aurora-blob a1"></div>
+    <div class="aurora-blob a2"></div>
+    <div class="aurora-blob a3"></div>
+  </div>
+
+  <!-- ★ EASTER EGG OVERLAY -->
+  <div class="egg-overlay" id="eggOverlay">
+    <div class="egg-inner">
+      <div class="egg-emoji" id="eggEmoji">🌙</div>
+      <p class="egg-msg" id="eggMsg">kamu nemu easter egg nya 🥚✨</p>
+      <p class="egg-sub">aku sayang kamu seribu tahun 🤍</p>
+      <button class="pill-btn" onclick="closeEgg()"><span>awww 🥺</span></button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
